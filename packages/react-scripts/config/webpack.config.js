@@ -128,7 +128,7 @@ module.exports = function (webpackEnv) {
       },
       {
         loader: require.resolve('css-loader'),
-        options: cssOptions,
+        options: { ...cssOptions, url: false }
       },
       {
         // Options for PostCSS as we reference these options twice
@@ -258,6 +258,7 @@ module.exports = function (webpackEnv) {
       minimizer: [
         // This is only used in production mode
         new TerserPlugin({
+		      parallel: true,
           terserOptions: {
             parse: {
               // We want terser to parse ecma 8 code. However, we don't want it
@@ -308,6 +309,18 @@ module.exports = function (webpackEnv) {
       modules: ['node_modules', paths.appNodeModules].concat(
         modules.additionalModulePaths || []
       ),
+	  fallback: {
+		  "buffer": false,
+		  "@emotion/styled": false,
+		  "@emotion/react": false,
+		  "chain-function": false,
+		  "create-react-class": false,
+		  "domutils": false,
+		  "jss": false,
+		  "mdi-material-ui": false,
+		  "react-infinite": false,
+		  "react-transition-group": false
+	  },
       // These are the reasonable defaults supported by the Node ecosystem.
       // We also include JSX as a common component filename extension to support
       // some tools, although we do not recommend using it, see:
