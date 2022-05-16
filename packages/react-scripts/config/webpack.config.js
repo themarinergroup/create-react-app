@@ -197,6 +197,11 @@ module.exports = function (webpackEnv) {
   };
 
   return {
+    devServer: {
+      devMiddleware: {
+        writeToDisk: true
+      }
+    },
     target: ['browserslist'],
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
@@ -218,7 +223,7 @@ module.exports = function (webpackEnv) {
       // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+        : isEnvDevelopment && 'temp/js/bundle.js',
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
@@ -310,16 +315,17 @@ module.exports = function (webpackEnv) {
         modules.additionalModulePaths || []
       ),
 	  fallback: {
-		  "buffer": false,
-		  "@emotion/styled": false,
-		  "@emotion/react": false,
-		  "chain-function": false,
-		  "create-react-class": false,
-		  "domutils": false,
-		  "jss": false,
-		  "mdi-material-ui": false,
-		  "react-infinite": false,
-		  "react-transition-group": false
+		  "buffer": require.resolve("buffer"),
+		  "@emotion/styled": require.resolve("@emotion/styled"),
+		  "@emotion/react": require.resolve("@emotion/react"),
+		  "chain-function": require.resolve("chain-function"),
+		  "create-react-class": require.resolve("create-react-class"),
+		  "domutils": require.resolve("domutils"),
+		  "jss": require.resolve("jss"),
+		  "mdi-material-ui": require.resolve("mdi-material-ui"),
+		  "react-infinite": require.resolve("react-infinite"),
+		  "react-transition-group": require.resolve("react-transition-group"),
+		  "regenerator-runtime": require.resolve("regenerator-runtime")
 	  },
       // These are the reasonable defaults supported by the Node ecosystem.
       // We also include JSX as a common component filename extension to support
@@ -354,7 +360,7 @@ module.exports = function (webpackEnv) {
           babelRuntimeEntry,
           babelRuntimeEntryHelpers,
           babelRuntimeRegenerator,
-        ]),
+        ])
       ],
     },
     module: {
@@ -427,6 +433,7 @@ module.exports = function (webpackEnv) {
             {
               test: /\.(js|mjs|jsx|ts|tsx)$/,
               include: paths.appSrc,
+              exclude: /node_modules(?!\/quill-image-drop-module|quill-image-resize-module)/,
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
@@ -478,7 +485,7 @@ module.exports = function (webpackEnv) {
             // Unlike the application JS, we only compile the standard ES features.
             {
               test: /\.(js|mjs)$/,
-              exclude: /@babel(?:\/|\\{1,2})runtime/,
+              exclude: [/@babel(?:\/|\\{1,2})runtime/, /node_modules(?!\/quill-image-drop-module|quill-image-resize-module)/],
               loader: require.resolve('babel-loader'),
               options: {
                 babelrc: false,
@@ -704,6 +711,9 @@ module.exports = function (webpackEnv) {
           };
         },
       }),
+	  new webpack.ProvidePlugin({
+		  "window.Quill": "quill"
+	  }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
