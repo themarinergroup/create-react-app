@@ -323,7 +323,6 @@ module.exports = function (webpackEnv) {
 		  "domutils": require.resolve("domutils"),
 		  "jss": require.resolve("jss"),
 		  "mdi-material-ui": require.resolve("mdi-material-ui"),
-		  "react-infinite": require.resolve("react-infinite"),
 		  "react-transition-group": require.resolve("react-transition-group"),
 		  "regenerator-runtime": require.resolve("regenerator-runtime")
 	  },
@@ -475,7 +474,7 @@ module.exports = function (webpackEnv) {
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
                 // directory for faster rebuilds.
-                cacheDirectory: true,
+                cacheDirectory: false,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
                 compact: isEnvProduction,
@@ -497,7 +496,7 @@ module.exports = function (webpackEnv) {
                     { helpers: true },
                   ],
                 ],
-                cacheDirectory: true,
+                cacheDirectory: false,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
                 // @remove-on-eject-begin
